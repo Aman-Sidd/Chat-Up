@@ -573,12 +573,12 @@
     top:5px;
   }
   .right-list li{
-    font-size : 10px;
+    font-size : 15px;
     max-width: 40%;
     padding: 7px 8px
   }
   .left-list li{
-    font-size : 10px;
+    font-size : 15px;
     padding: 7px 9px;
   }
   #display{
@@ -586,5 +586,11 @@
   }
   .showChats_innerContent3{
     font-size:10px;
+  }
+  .form input[type="text"]{
+    padding: 6px 6px 6px 20px;
+  }
+  .form{
+    width: 71%;
   }
 }
