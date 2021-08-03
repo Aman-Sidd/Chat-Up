@@ -7,7 +7,7 @@ const io = new Server(server);
 const path = require('path');
 const { userJoin, delUser, _delUser, noOfUser} = require('./imp/userArray.js')
 const moment = require('moment');
-
+const port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname+'/public'))
 
@@ -77,6 +77,6 @@ io.on('connection', (socket) => {
    console.log('A user disconnected');
 });
 
-server.listen(3000, function () {
-   console.log('listening on *:3000');
+server.listen(port, function () {
+   console.log(`listening on ${port}`);
 });
