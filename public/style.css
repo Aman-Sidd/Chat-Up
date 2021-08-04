@@ -252,6 +252,7 @@
   box-shadow: 0 4px 5px 0 rgb(0 0 0 / 8%), 0 7px 9px 0 rgb(0 0 0 / 0%);
   height: 47px;
   position: sticky;
+  background-color: white;
   top:0;
 }
 
