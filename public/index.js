@@ -18,6 +18,9 @@ var checkHead = [];
 var publicChat = [];
 
 function hamburger(){
+    document.getElementsByClassName('appName')[0].innerHTML = `<p><i class="fa fa-whatsapp" aria-hidden="true" style="font-weight: bold;
+    font-size: 27px;
+    margin-right: 8px;"></i>Chat-Up</p>`;
     if(document.getElementsByClassName('showChats')[0].style.width === "61%"){
         document.getElementsByClassName('showChats')[0].style.width="0";
     }
@@ -80,7 +83,7 @@ socket.on('OnlineUsers', (uData, cnt) => {
             listHtml += `<li class="pp" onclick="getInfo(event)"><span class="dot"></span>${uData[x].username} (you)</li><div style="display:none">${uData[x].id}</div>`
         }
         else {
-            listHtml += `<li class="pp" onclick="getInfo(event)"><span class="dot"></span>${uData[x].username}</li><div style="display:none">${uData[x].id}</div>`
+            listHtml += `<li class="pp" onclick="getInfo(event)"><a href="#" style="text-decoration:none; color:#666563;"><span class="dot"></span>${uData[x].username}</a></li><div style="display:none">${uData[x].id}</div>`
         }
         let tempId = uData[x].id;
         checkHead.push({ usersId: tempId, status: false })
@@ -101,7 +104,7 @@ socket.on('OnlineUsers', (uData, cnt) => {
         <ul>
         ${listHtml}
         </ul></div>`;
-    let bottomMostHtml = `<div id='returnBack'><h4 id="returnBackh4"><i class="fa fa-backward" style="margin-right: 8px;"></i>Public Chat</h4></div>`;
+    let bottomMostHtml = `<div id='returnBack'><a href="#" style="text-decoration: none;" ><h4 class="returnPublicChat" id="returnBackh4"><i class="fa fa-backward" style="margin-right: 8px;"></i>Public Chat</h4></a></div>`;
 
     ShowUsers.innerHTML = onlineHtml + bottomMostHtml;
 
@@ -130,7 +133,7 @@ socket.on('OnlineUsers', (uData, cnt) => {
 var userArray = [];
 function getInfo(event) {
     console.log(userArray);
-    userIdOfUser = event.target.nextElementSibling.textContent;
+    userIdOfUser = event.target.parentElement.nextElementSibling.textContent;
     recipientUsername = event.target.textContent;
     if (userIdOfUser !== socket.id) {
         display.innerHTML = `<div class="displayName"><h3><span id="hamburger" onclick="hamburger();"><i class="fa fa-bars"></i></span><i class="fa fa-users"></i>${recipientUsername}</h3></div>`;
@@ -272,7 +275,6 @@ function incomingMessage(message, username, date) {
         ul.appendChild(li);
         ul.appendChild(div);
         display.appendChild(ul);
-        input.value = '';
         display.scrollTop = display.scrollHeight;
     }
 }
@@ -415,7 +417,9 @@ input.addEventListener('keypress', function (e) {
 });
 
 // Showing Incoming Messages
-socket.on('receive-msg', (senderId, username, msg, date) => {
+socket.on('receive-msg', (senderId, username, msg) => {
+    let t = moment();
+    let date = t.format('h:mm a');
     if (flag === 0) {
         incomingMessage(msg, username, date);
         disp = display.innerHTML;
@@ -442,7 +446,7 @@ socket.on('receivePrivateMsg', (senderId, msg, username) => {
     console.log('msg-->', msg)
     console.log('username-->', username)
     console.log('time-->', time);
-
+    
     if (senderId === userIdOfUser) {
         console.log("here senderId and userIdOfUser is equal")
         if (flag === 1) {
@@ -453,13 +457,15 @@ socket.on('receivePrivateMsg', (senderId, msg, username) => {
             }
             let index = userArray.findIndex(post => post.recipientUserId === userIdOfUser)
             if (index !== -1)
-                userArray[index].html = display.innerHTML;
+            userArray[index].html = display.innerHTML;
             else
-                userArray.push(privateMsgHtml);
-
+            userArray.push(privateMsgHtml);
+            
         }
     }
     else {
+        if(window.innerWidth < 700)
+        document.getElementsByClassName('appName')[0].innerHTML = `<p class="blink_me" onclick="hamburger();">${username} messaged you. Click this!</p>`
         let privateMsgHtml = {
             recipientUserId: senderId,
             html: `<ul class="left-list">

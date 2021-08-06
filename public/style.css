@@ -2,7 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Encode+Sans+SC:wght@300;400&family=Noticia+Text:ital,wght@0,700;1,400;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
-
+body{
+  margin:0px;
+}
   body::after {
     content: "";
     /* background: url(realBG.png) no-repeat fixed; */
@@ -23,6 +25,7 @@
 
     display: flex;
     justify-content: center;
+    margin-bottom: 45px;
   }
   
   .topnav {
@@ -459,6 +462,40 @@
   display: flex;
   width: 63.1%;
 }
+.returnPublicChatH4{
+  font-weight: bolder;
+    color: black;
+    font-size: 17px;
+}
+.text-footer{
+  display:none;
+}
+.text-footer p{
+  margin: 0px;
+  padding-left: 10px;
+}
+.background2{
+  background:black;
+  background-size:cover;
+}
+.pop_up{
+  height: 70px;
+  position: absolute;
+  top: 0px;
+  margin-left: 8px;
+  border-radius: 7px;
+  width: 95%;
+  border: 2px solid black;
+  z-index: 10;
+}
+.blink_me {
+  font-size: 20px;
+  animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {  
+  50% { opacity: 0; }
+}
 /* Media Queries */
 
 @media screen and (min-width: 700px) and (max-width: 1053px){
@@ -517,9 +554,6 @@
     height: 90vh;
     display: flex;
   }
-  body::after{
-    height:187vh;
-  }
   #yourChats{
     height: 80vh;
   }
@@ -536,7 +570,7 @@
   .appName{
     width:100%;
     font-size: 26px;
-    margin-top:10px;
+    margin: 0px;
   }
   .appName p{
     padding-left: 0px;
@@ -553,6 +587,7 @@
   }
   .chats{
     width: 85%;
+    margin-left: 6px;
   }
   .showChats_innerContent4{
     font-size:15px;
@@ -576,7 +611,8 @@
   .right-list li{
     font-size : 15px;
     max-width: 40%;
-    padding: 7px 8px
+    padding: 7px 9px;
+    padding-left: 14px;
   }
   .left-list li{
     font-size : 15px;
@@ -588,5 +624,24 @@
   .showChats_innerContent3{
     font-size:10px;
   }
-  
+  .text-footer{
+    display: flex;
+    justify-content: center;
+    color:white;
+    flex-direction: column;
+    text-align: center;
+    padding: 10px 0px;
+  }
+  .text-footer p{
+    font-size: 10px;
+  }
+  .text-footer div{
+    font-size: 13px;
+  }
+  body::after{
+    height:173vh;
+  }
+  section{
+    margin-bottom: 0px;
+  }
 }
