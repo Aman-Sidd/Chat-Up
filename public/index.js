@@ -4,10 +4,10 @@ const submit = document.getElementById('button');
 const display = document.getElementById('display');
 const ShowUsers = document.getElementById('ShowUsers');
 const yourChats = document.getElementById('yourChats');
+
 const { Username } = Qs.parse(location.search, {
     ignoreQueryPrefix: true
 })
-
 var flag = 0;
 var socket = io();
 // var Username = window.prompt("Enter your name: ");
@@ -272,6 +272,7 @@ function incomingMessage(message, username, date) {
         ul.appendChild(li);
         ul.appendChild(div);
         display.appendChild(ul);
+        input.value = '';
         display.scrollTop = display.scrollHeight;
     }
 }
@@ -294,15 +295,14 @@ var incomingMsgCount = [];
 submit.addEventListener('click', () => {
     if (flag === 0) {
         let msg = input.value;
-        var moment_date = moment();
-        displayMessage(msg, moment_date.format('h:mm a'));
+        displayMessage(msg, formatAMPM(new Date));
         socket.emit('message', msg, Username);
         display.scrollTop = display.scrollHeight;
         disp = display.innerHTML;
         publicChat.push({
             html: `<ul class="right-list">
             <div class="senderName">You</div>
-        <li><span class="time">${moment_date.format('h:mm a')}</span>${msg}</li> 
+        <li><span class="time">${formatAMPM(new Date)}</span>${msg}</li> 
     </ul>`})
     }
     if (flag === 1) {
@@ -311,17 +311,16 @@ submit.addEventListener('click', () => {
         let msg = input.value;
         console.log('msg--> ', msg);
         console.log('Username -->', Username);
-        var moment_date = moment();
-        displayMessage(msg, moment_date.format('h:mm a'));
+        displayMessage(msg, formatAMPM(new Date));
         socket.emit('PrivateMsg', msg, Username, userIdOfUser);
         display.scrollTop = display.scrollHeight;
         const inDex = ourChats.findIndex(post => post.id === userIdOfUser);
         if (inDex === -1) {
-            ourChats.push({ id: userIdOfUser, user_name: recipientUsername, Time: moment_date.format('h:mm a'), Msg: msg, count: 0 });
+            ourChats.push({ id: userIdOfUser, user_name: recipientUsername, Time: formatAMPM(new Date), Msg: msg, count: 0 });
         }
         else {
             ourChats[inDex].user_name = recipientUsername;
-            ourChats[inDex].Time = moment_date.format('h:mm a');
+            ourChats[inDex].Time = formatAMPM(new Date);
             ourChats[inDex].Msg = msg;
             ourChats[inDex].count = 0;
         }
@@ -354,35 +353,34 @@ input.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         if (flag === 0) {
             let msg = input.value;
-            var moment_date = moment();
-            displayMessage(msg, moment_date.format('h:mm a'));
+            displayMessage(msg, formatAMPM(new Date));
             socket.emit('message', msg, Username);
             display.scrollTop = display.scrollHeight;
             disp = display.innerHTML;
             publicChat.push({
                 html: `<ul class="right-list">
                 <div class="senderName">You</div>
-            <li><span class="time">${moment_date.format('h:mm a')}</span>${msg}</li> 
+            <li><span class="time">${formatAMPM(new Date)}</span>${msg}</li> 
         </ul>`})
 
         }
         if (flag === 1) {
+            
             console.log('user_Id-->', userIdOfUser);
             console.log('flag-->', flag);
             let msg = input.value;
             console.log('msg--> ', msg);
             console.log('Username -->', Username);
-            var moment_date = moment();
-            displayMessage(msg, moment_date.format('h:mm a'));
+            displayMessage(msg, formatAMPM(new Date));
             socket.emit('PrivateMsg', msg, Username, userIdOfUser);
             display.scrollTop = display.scrollHeight;
             const inDex = ourChats.findIndex(post => post.id === userIdOfUser);
             if (inDex === -1) {
-                ourChats.push({ id: userIdOfUser, user_name: recipientUsername, Time: moment_date.format('h:mm a'), Msg: msg, count: 0 });
+                ourChats.push({ id: userIdOfUser, user_name: recipientUsername, Time: formatAMPM(new Date), Msg: msg, count: 0 });
             }
             else {
                 ourChats[inDex].user_name = recipientUsername;
-                ourChats[inDex].Time = moment_date.format('h:mm a');
+                ourChats[inDex].Time = formatAMPM(new Date);
                 ourChats[inDex].Msg = msg;
                 ourChats[inDex].count = 0;
             }
@@ -417,22 +415,20 @@ input.addEventListener('keypress', function (e) {
 });
 
 // Showing Incoming Messages
-socket.on('receive-msg', (senderId, username, msg) => {
+socket.on('receive-msg', (senderId, username, msg, date) => {
     if (flag === 0) {
-        let time = moment();
-        incomingMessage(msg, username, time.format('h:mm a'));
+        incomingMessage(msg, username, date);
         disp = display.innerHTML;
         publicChat.push({
             userId: senderId, html: `<ul class="left-list">
-        <li><span class="time">${time.format('h:mm a')}</span>${msg}</li> 
+        <li><span class="time">${date}</span>${msg}</li> 
         <div class="senderName">${username}</div>
     </ul>`})
     }
     else {
-        let time = moment();
         publicChat.push({
             userId: senderId, html: `<ul class="left-list">
-        <li><span class="time">${time.format('h:mm a')}</span>${msg}</li> 
+        <li><span class="time">${date}</span>${msg}</li> 
         <div class="senderName">${username}</div>
     </ul>`})
     }
@@ -440,6 +436,8 @@ socket.on('receive-msg', (senderId, username, msg) => {
 
 // receiving Private Msg
 socket.on('receivePrivateMsg', (senderId, msg, username) => {
+    let t = moment();
+    let time = t.format('h:mm a');
     console.log('senderId-->', senderId)
     console.log('msg-->', msg)
     console.log('username-->', username)
@@ -448,8 +446,7 @@ socket.on('receivePrivateMsg', (senderId, msg, username) => {
     if (senderId === userIdOfUser) {
         console.log("here senderId and userIdOfUser is equal")
         if (flag === 1) {
-            let time = moment();
-            incomingMessage(msg, username, time.format('h:mm a'));
+            incomingMessage(msg, username, time);
             let privateMsgHtml = {
                 recipientUserId: userIdOfUser,
                 html: display.innerHTML
@@ -463,35 +460,33 @@ socket.on('receivePrivateMsg', (senderId, msg, username) => {
         }
     }
     else {
-        let time = moment();
         let privateMsgHtml = {
             recipientUserId: senderId,
             html: `<ul class="left-list">
-                 <li><span class="time">${time.format('h:mm a')}</span>${msg}</li> 
+                 <li><span class="time">${time}</span>${msg}</li> 
                  <div class="senderName">${username}</div>
                  </ul>`
         }
         let index = userArray.findIndex(post => post.recipientUserId === senderId)
         if (index !== -1)
             userArray[index].html += `<ul class="left-list">
-            <li><span class="time">${time.format('h:mm a')}</span>${msg}</li> 
+            <li><span class="time">${time}</span>${msg}</li> 
             <div class="senderName">${username}</div>
             </ul>`;
         else
             userArray.push(privateMsgHtml);
     }
     if (senderId !== userIdOfUser) {
-        let time = moment();
         let indexCount = ourChats.findIndex(post => post.id === senderId);
         if (indexCount !== -1) {
             // incomingMsgCount[indexCount].stats = false;
             ourChats[indexCount].user_name = username;
-            ourChats[indexCount].Time = time.format('h:mm a');
+            ourChats[indexCount].Time = time;
             ourChats[indexCount].Msg = msg;
             ourChats[indexCount].count++;
         }
         else {
-            ourChats.push({ id: senderId, user_name: username, Msg: msg, Time: time.format('h:mm a'), count: 1 })
+            ourChats.push({ id: senderId, user_name: username, Msg: msg, Time: time, count: 1 })
         }
         let fullHtml = '';
         for (let i = ourChats.length - 1; i >= 0; i--) {
@@ -506,15 +501,14 @@ socket.on('receivePrivateMsg', (senderId, msg, username) => {
         yourChats.innerHTML = fullHtml;
     }
     else {
-        let time = moment();
         const inDex = ourChats.findIndex(post => post.id === senderId);
         if (inDex !== -1) {
             ourChats[inDex].user_name = username;
-            ourChats[inDex].Time = time.format('h:mm a');
+            ourChats[inDex].Time = time;
             ourChats[inDex].Msg = msg;
         }
         else {
-            ourChats.push({ id: senderId, user_name: username, Time: time.format('h:mm a'), Msg: msg });
+            ourChats.push({ id: senderId, user_name: username, Time: time, Msg: msg });
         }
 
         let fullHtml = '';
@@ -528,6 +522,14 @@ socket.on('receivePrivateMsg', (senderId, msg, username) => {
     }
 })
 
+var p = window.matchMedia("(max-width: 699px)")
+p.addEventListener('change',(x)=>{
+    console.log('autoCLick event fired')
+    if(x.matches){
+        document.getElementById('hamburger').click();
+        document.getElementById('hamburger').click();
+    }
+});
 
 var resizeScreen = window.matchMedia("(min-width: 700px)");
 resizeScreen.addEventListener('change',(x)=>{
