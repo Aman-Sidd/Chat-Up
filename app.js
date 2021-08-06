@@ -56,6 +56,7 @@ io.on('connection', (socket) => {
       console.log('username:',username);
       console.log('user_ID:',user_ID)
       var date = moment().format('h:mm a');
+      console.log("The date is ", date);
       socket.broadcast.to(user_ID).emit('receivePrivateMsg',socket.id,msg, username,date)
       
    })
